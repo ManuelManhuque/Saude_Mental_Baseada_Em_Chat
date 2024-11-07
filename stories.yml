@@ -1,0 +1,55 @@
+version: "2.0"
+stories:
+  - story: saudação e despedida
+    steps:
+      - intent: saudade
+      - action: utter_saudade
+      - intent: adeus
+      - action: utter_adeus
+
+  - story: usuário pede ajuda
+    steps:
+      - intent: ajuda
+      - action: utter_ajuda
+      - intent: adeus
+      - action: utter_adeus
+
+  - story: usuário está triste e estressado
+    steps:
+      - intent: triste
+      - action: utter_triste
+      - intent: estressado
+      - action: utter_estressado
+      - intent: adeus
+      - action: utter_adeus
+
+  - story: introdução e sobre
+    steps:
+      - intent: sobre
+      - action: utter_sobre
+      - intent: habilidade
+      - action: utter_habilidade
+
+  - story: usuário pergunta sobre criação
+    steps:
+      - intent: criação
+      - action: utter_criação
+
+  - story: usuário compartilha nome
+    steps:
+      - intent: nome
+      - action: utter_nome
+      - intent: saudade
+      - action: utter_saudade
+
+  - story: resposta neutra
+    steps:
+      - intent: resposta-neutra
+      - action: utter_resposta-neutra
+
+  - story: sem resposta detectada
+    steps:
+      - intent: sem resposta
+      - action: utter_sem_resposta
+      - intent: adeus
+      - action: utter_adeus

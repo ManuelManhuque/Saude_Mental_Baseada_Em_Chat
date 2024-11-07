@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot de Saúde Mental</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/rasa-webchat/lib/index.min.js"></script>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <style>
+        body {
+            background-color: #f4f7fc;
+            font-family: 'Arial', sans-serif;
+        }
+        .login-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 0 auto;
+            margin-top: 100px;
+        }
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .chatbox {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    max-height: 350px;
+    display: flex;
+    flex-direction: column; /* Garante que as mensagens fiquem em colunas (uma embaixo da outra) */
+}
+
+.message {
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    max-width: 75%; /* Limita a largura das mensagens */
+    display: inline-block;
+    word-wrap: break-word; /* Garante que o texto se quebre automaticamente caso ultrapasse a largura */
+}
+
+.message.user {
+    background-color: #e1f5fe;
+    align-self: flex-end;
+}
+
+.message.bot {
+    background-color: #c8e6c9;
+    align-self: flex-start;
+}
+
+        .input-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .input-container input {
+            width: 80%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+        .input-container button {
+            width: 15%;
+            background-color: #0288d1;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .input-container button:hover {
+            background-color: #0277bd;
+        }
+        .alert {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app" class="container mt-5">
+        <!-- Tela de login/registro -->
+        <div v-if="!loggedIn" class="login-container">
+            <h2>Login</h2>
+            <div class="mb-3">
+                <input v-model="username" placeholder="Usuário" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <input v-model="password" type="password" placeholder="Senha" class="form-control" required>
+            </div>
+            <button @click="login" class="btn btn-primary w-100 mb-3">Entrar</button>
+            <button @click="register" class="btn btn-secondary w-100">Registrar</button>
+            <div v-if="loginError" class="alert alert-danger mt-3">
+                {{ loginError }}
+            </div>
+        </div>
+        
+        <!-- Tela de chat -->
+        <div v-else class="chatbox">
+            <h1 class="text-center">Chatbot de Saúde Mental</h1>
+            <div id="chatbox" class="messages-container">
+                <div v-for="(msg, index) in messages" :key="index" :class="['message', msg.sender === 'user' ? 'user' : 'bot']">
+                    {{ msg.text }}
+                </div>
+            </div>
+            <div class="input-container">
+                <input v-model="userInput" @keyup.enter="sendMessage" placeholder="Digite sua mensagem..." class="form-control" required>
+                <button @click="sendMessage">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    username: '',
+                    password: '',
+                    userInput: '',
+                    messages: [],
+                    userId: null,
+                    loggedIn: false,
+                    isAdmin: false,
+                    loginError: '',
+                    socket: null
+                };
+            },
+            methods: {
+                async login() {
+                    this.loginError = '';
+                    // Verifica se o login é do administrador
+                    if (this.username === "Manhuque" && this.password === "4321") {
+                        this.loggedIn = true;
+                        this.isAdmin = true;
+                        window.location.href = "admDashboard.html";  // Redireciona para o painel de admin
+                    } else {
+                        try {
+                            const response = await axios.post('http://localhost:3000/login', {
+                                username: this.username,
+                                password: this.password
+                            });
+                            this.userId = response.data.userId;
+                            this.loggedIn = true;
+                            this.loadConversations();
+                            this.initSocket();
+                        } catch (error) {
+                            this.loginError = 'Erro de login: ' + (error.response?.data?.error || 'Verifique as credenciais');
+                        }
+                    }
+                },
+                async register() {
+                    try {
+                        const response = await axios.post('http://localhost:3000/register', {
+                            username: this.username,
+                            password: this.password
+                        });
+                        this.userId = response.data.userId;
+                        alert('Registro bem-sucedido! Faça login para continuar.');
+                    } catch (error) {
+                        alert('Erro de registro: ' + (error.response?.data?.error || 'Tente novamente'));
+                    }
+                },
+                async loadConversations() {
+                    try {
+                        const response = await axios.get(`http://localhost:3000/conversations/${this.userId}`);
+                        this.messages = response.data.map(msg => ({ text: msg.message, sender: msg.sender }));
+                    } catch (error) {
+                        console.error('Erro ao carregar conversas:', error);
+                    }
+                },
+                initSocket() {
+                    this.socket = io("http://localhost:5005", { path: "/socket.io/" });
+                    this.socket.on("bot_uttered", (data) => {
+                        this.messages.push({ text: data.text, sender: 'bot' });
+                    });
+                    this.socket.on("connect_error", (error) => {
+                        console.error("Erro de conexão com o WebSocket:", error);
+                    });
+                },
+                sendMessage() {
+                    if (this.userInput.trim() === '') return;
+                    this.messages.push({ text: this.userInput, sender: 'user' });
+
+                    // Envia a mensagem do usuário para o Rasa via WebSocket
+                    this.socket.emit("user_uttered", {
+                        message: this.userInput,
+                        customData: { language: "pt" }
+                    });
+
+                    this.userInput = '';  // Limpa o campo de entrada
+                }
+            },
+            mounted() {
+                WebChat.default.init({
+                    selector: "#webchat",
+                    initPayload: "/saudacao",
+                    customData: { "language": "pt" },
+                    socketUrl: "http://localhost:5005",
+                    socketPath: "/socket.io/",
+                    title: "Chatbot",
+                    subtitle: "Como posso ajudar?",
+                    params: { storage: "session" },
+                    showCloseButton: true,
+                    tooltipPayload: "/saudacao",
+                    tooltipText: "Clique para conversar"
+                });
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

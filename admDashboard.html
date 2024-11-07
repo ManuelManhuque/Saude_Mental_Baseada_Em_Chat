@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Chatbot de Saúde Mental</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin-top: 30px;
+        }
+
+        .card {
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .user-list {
+            margin-top: 20px;
+        }
+
+        .user-actions button {
+            margin-left: 10px;
+        }
+
+        .form-control {
+            border-radius: 5px;
+        }
+
+        .btn {
+            border-radius: 5px;
+        }
+
+        .modal-content {
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container">
+        <!-- Admin Dashboard -->
+        <div v-if="isAdmin">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Admin Dashboard</h2>
+                </div>
+                <div class="card-body">
+                    <button @click="logout" class="btn btn-secondary mb-2">Logout</button>
+                    <h3>Usuários</h3>
+                    <div v-if="users.length > 0" class="user-list">
+                        <div v-for="user in users" :key="user.id" class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5 class="card-title">{{ user.username }}</h5>
+                                    </div>
+                                    <div class="user-actions">
+                                        <button @click="editUser(user)" class="btn btn-warning btn-sm">Editar</button>
+                                        <button @click="deleteUser(user.id)" class="btn btn-danger btn-sm">Excluir</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <p>Nenhum usuário encontrado.</p>
+                    </div>
+
+                    <h3>Criar Novo Usuário</h3>
+                    <div class="mb-3">
+                        <input v-model="newUsername" placeholder="Nome do usuário" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <input v-model="newPassword" type="password" placeholder="Senha" class="form-control" />
+                    </div>
+                    <button @click="createUser" class="btn btn-success">Criar Usuário</button>
+                </div>
+            </div>
+
+            <!-- Modal de edição de usuário -->
+            <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editUserModalLabel">Editar Usuário</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <input v-model="editedUsername" placeholder="Nome do usuário" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <input v-model="editedPassword" type="password" placeholder="Senha" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button @click="saveUserEdit" type="button" class="btn btn-primary">Salvar alterações</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    isAdmin: true,
+                    users: [],
+                    newUsername: '',
+                    newPassword: '',
+                    editedUsername: '',
+                    editedPassword: '',
+                    userIdToEdit: null
+                };
+            },
+            methods: {
+                async fetchUsers() {
+                    const response = await axios.get('http://localhost:3000/users');
+                    this.users = response.data;
+                },
+                async createUser() {
+                    await axios.post('http://localhost:3000/register', {
+                        username: this.newUsername,
+                        password: this.newPassword
+                    });
+                    this.newUsername = '';
+                    this.newPassword = '';
+                    this.fetchUsers();
+                },
+                async deleteUser(id) {
+                    await axios.delete(`http://localhost:3000/users/${id}`);
+                    this.fetchUsers();
+                },
+                editUser(user) {
+                    this.userIdToEdit = user.id;
+                    this.editedUsername = user.username;
+                    this.editedPassword = ''; // Mantém a senha em branco para edição
+                    const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+                    modal.show();
+                },
+                async saveUserEdit() {
+                    if (this.userIdToEdit !== null) {
+                        await axios.put(`http://localhost:3000/users/${this.userIdToEdit}`, {
+                            username: this.editedUsername,
+                            password: this.editedPassword || this.users.find(user => user.id === this.userIdToEdit).password
+                        });
+                        this.fetchUsers();
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                        modal.hide();
+                    }
+                },
+                logout() {
+                    window.location.href = "index.html";  // Redireciona para a tela de login
+                }
+            },
+            mounted() {
+                this.fetchUsers();
+            }
+        }).mount('#app');
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

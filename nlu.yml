@@ -1,0 +1,466 @@
+nlu:
+- examples: '- Oi
+
+    - Olá
+
+    - Tem alguém aí?
+
+    - Olá
+
+    - Olá
+
+    - Olá
+
+    - Olá
+
+    - Olá
+
+    - Bom dia
+
+    - Cone de Conchas
+
+    - Boa etiqueta
+
+    - Olá'
+  intent: saudade
+- examples: '- Bom dia'
+  intent: manhã
+- examples: '- Boa tarde'
+  intent: tarde
+- examples: '- Boa noite'
+  intent: noite
+- examples: '- Boa noite'
+  intent: noite
+- examples: '- Tchau
+
+    - Até mais
+
+    - Adeus
+
+    - Adeus
+
+    - Sayonara
+
+    - ok tchau
+
+    - Até então
+
+    - Adeus'
+  intent: adeus
+- examples: '- Obrigado
+
+    - Obrigado
+
+    - Isso é útil
+
+    - Obrigado pela ajuda
+
+    - Muito obrigado'
+  intent: obrigado
+- examples: '- '
+  intent: sem resposta
+- examples: '- nada demais'
+  intent: resposta-neutra
+- examples: '- Quem é você?
+
+    - O que você é?
+
+    - Quem você é?
+
+    - Conte-me mais sobre você.
+
+    - Qual é o seu nome?
+
+    - Como devo chamá-lo?
+
+    - Qual é o seu nome?
+
+    - Conte-me sobre você'
+  intent: sobre
+- examples: '- O que você pode fazer?'
+  intent: habilidade
+- examples: '- Quem criou você?
+
+    - Como você foi feito?
+
+    - Como você foi criado?'
+  intent: criação
+- examples: "- Meu nome é \n- Eu sou o nome.\n- Eu atendo por "
+  intent: nome
+- examples: '- Você poderia me ajudar?
+
+    - me dê uma mão, por favor
+
+    - Você pode ajudar?
+
+    - O que você pode fazer por mim?
+
+    - Preciso de suporte
+
+    - Preciso de ajuda
+
+    - Me apoie, por favor'
+  intent: ajuda
+- examples: '- Estou me sentindo solitário
+
+    - Estou tão solitário
+
+    - Estou me sentindo para baixo
+
+    - Estou me sentindo triste
+
+    - Estou triste
+
+    - Estou me sentindo tão solitário
+
+    - Estou me sentindo vazio
+
+    - Não tenho ninguém'
+  intent: triste
+- examples: '- Estou tão estressado
+
+    - Estou tão estressado
+
+    - Sinto-me preso
+
+    - Ainda me sinto estressado
+
+    - Estou tão esgotado'
+  intent: estressado
+- examples: '- Eu me sinto tão inútil.
+
+    - Ninguém gosta de mim.
+
+    - Não consigo fazer nada.
+
+    - Sou tão inútil
+
+    - Nada mais faz sentido'
+  intent: inútil
+- examples: '- Não aguento mais
+
+    - Estou tão deprimido
+
+    - Acho que estou deprimido.
+
+    - Estou com depressão'
+  intent: deprimido
+- examples: '- Eu me sinto ótimo hoje.
+
+    - Estou feliz.
+
+    - Eu me sinto feliz.
+
+    - Estou bem.
+
+    - alegre
+
+    - Estou bem
+
+    - Eu me sinto bem'
+  intent: feliz
+- examples: '- Ah, entendi.
+
+    - OK
+
+    - OK
+
+    - jurídico
+
+    - tanto faz
+
+    - K
+
+    - bem
+
+    - sim
+
+    - sim
+
+    - não
+
+    - na verdade não'
+  intent: casual
+- examples: '- Estou tão ansioso.
+
+    - Estou tão ansioso por causa de'
+  intent: ansioso
+- examples: '- Não quero falar sobre isso.
+
+    - Não, fique longe.
+
+    - Não consigo me abrir.
+
+    - Fique quieto'
+  intent: não-falando
+- examples: '- Tenho insônia
+
+    - Estou sofrendo de insônia
+
+    - Não consigo dormir.
+
+    - Não durmo há dias.
+
+    - Parece que não consigo dormir.
+
+    - Não tenho dormido direito há alguns dias.'
+  intent: dormir
+- examples: '- Estou com medo
+
+    - Isso parece horrível. O que eu faço?
+
+    - Não, eu não quero que eu me sinta assim
+
+    - Estou com medo de mim mesmo'
+  intent: assustado
+- examples: '- Minha mãe morreu
+
+    - Meu irmão morreu
+
+    - Meu pai faleceu
+
+    - Minha irmã faleceu
+
+    - Alguém da minha família morreu
+
+    - Meu amigo faleceu'
+  intent: morte
+- examples: '- Você não me entende.
+
+    - Você é apenas um robô. Como você saberia?
+
+    - Você não pode saber o que estou passando
+
+    - Você é inútil
+
+    - Você não pode me ajudar
+
+    - Ninguém me entende.'
+  intent: entender
+- examples: '- É só isso.
+
+    - Não tenho mais nada a dizer
+
+    - Nada mais
+
+    - É tudo o que tenho a dizer
+
+    - não, seria só isso'
+  intent: feito
+- examples: '- Eu quero me matar
+
+    - Eu pensei em me matar.
+
+    - Eu quero morrer
+
+    - Eu vou me matar
+
+    - Eu vou cometer suicídio'
+  intent: suicídio
+- examples: '- Eu te odeio
+
+    - Eu não gosto de você
+
+    - Eu não confio em você'
+  intent: odeio-você
+- examples: '- Você me odeia
+
+    - Eu sei que você me odeia
+
+    - Você não gosta de mim'
+  intent: eu-odeia
+- examples: '- exames
+
+    - amigos
+
+    - relacionamento
+
+    - namorado
+
+    - namorada
+
+    - família
+
+    - dinheiro
+
+    - problemas financeiros'
+  intent: padrão
+- examples: '- Conte-me uma piada
+
+    - Conte-me outra piada'
+  intent: piadas
+- examples: '- Você já me disse isso
+
+    - Você já sabe disso
+
+    - Por que você está se repetindo?'
+  intent: repetir
+- examples: '- O que você está dizendo?
+
+    - Isso não faz sentido
+
+    - Resposta errada
+
+    - Resposta errada'
+  intent: errado
+- examples: '- Você é estúpido?
+
+    - Você é louco
+
+    - Você é burro
+
+    - Você é burro?'
+  intent: estúpido
+- examples: '- Onde você está?
+
+    - Onde você mora?
+
+    - Qual é a sua localização?'
+  intent: localização
+- examples: '- Quero falar sobre outra coisa
+
+    - Vamos falar sobre outra coisa.
+
+    - Podemos não falar sobre isso?
+
+    - Não quero falar sobre isso.'
+  intent: outra-coisa
+- examples: '- Eu não tenho amigos'
+  intent: amigos
+- examples: '- Posso te perguntar uma coisa?'
+  intent: pergunta
+- examples: '- Provavelmente porque meus exames estão se aproximando. Estou estressado
+    porque acho que não me preparei bem o suficiente.
+
+    - provavelmente por causa dos meus exames'
+  intent: problema
+- examples: '- Acho que não. Tudo o que consigo pensar são meus exames.
+
+    - na verdade não
+
+    - acho que não'
+  intent: sem aproximação
+- examples: '- ok, claro. Eu gostaria de aprender mais sobre isso.
+
+    - sim, eu gostaria de aprender mais sobre isso.
+
+    - eu gostaria de aprender mais sobre isso.'
+  intent: saiba-mais
+- examples: '- sim, você está certo. Eu mereço uma pausa.
+
+    - Sim, você está absolutamente certo sobre isso'
+  intent: usuário-concorda
+- examples: '- hmmm, isso parece que pode ser útil para mim.
+
+    - Isso parece útil.'
+  intent: meditação
+- examples: '- fiz o que você disse e me sinto muito melhor. muito obrigado.
+
+    - me sinto melhor agora'
+  intent: meditação-do-usuário
+- examples: '- muito obrigado novamente. Vou continuar praticando meditação e me concentrar
+    no que posso controlar.'
+  intent: pandora-útil
+- examples: '- Quero um conselho.
+
+    - Preciso de um conselho.
+
+    - Preciso de conselho sobre algo'
+  intent: conselho-ao-usuário
+- examples: '- Quero aprender sobre saúde mental.
+
+    - Quero aprender mais sobre saúde mental.
+
+    - Estou interessado em aprender sobre saúde mental.'
+  intent: aprender-saúde-mental
+- examples: '- Conte-me um fato sobre saúde mental
+
+    - Conte-me outro fato sobre saúde mental'
+  intent: fato sobre saúde mental
+- examples: '- O que é saúde mental?
+
+    - Definição de saúde mental'
+  intent: fato-1
+- examples: '- Por que a saúde mental é importante?
+
+    - Qual é a importância da saúde mental?'
+  intent: fato-2
+- examples: '- O que é depressão?
+
+    - Definição de depressão'
+  intent: fato-3
+- examples: '- Como sei se tenho depressão?
+
+    - Estou deprimido?
+
+    - Estou sofrendo de depressão?
+
+    - Estou mentalmente doente?'
+  intent: fato-5
+- examples: '- O que é um terapeuta?
+
+    - O que um terapeuta faz?'
+  intent: fato-6
+- examples: '- O que é terapia?
+
+    - Preciso de terapia?
+
+    - Para quem é a terapia?'
+  intent: fato-7
+- examples: '- O que significa ter uma doença mental?'
+  intent: fato-8
+- examples: '- Quem é afetado pela doença mental?'
+  intent: fato-9
+- examples: '- O que causa doenças mentais?'
+  intent: fato-10
+- examples: '- Quais são alguns dos sinais de alerta de doença mental?'
+  intent: fato-11
+- examples: '- Pessoas com doenças mentais podem se recuperar?'
+  intent: fato-12
+- examples: '- O que devo fazer se conheço alguém que parece ter sintomas de um transtorno
+    mental?'
+  intent: fato-13
+- examples: '- Como posso encontrar um profissional de saúde mental para mim ou para
+    meu filho?'
+  intent: fato-14
+- examples: '- Quais opções de tratamento estão disponíveis?'
+  intent: fato-15
+- examples: '- Se eu me envolvo em tratamento, o que preciso saber?'
+  intent: fato-16
+- examples: '- Qual é a diferença entre profissionais de saúde mental?'
+  intent: fato-17
+- examples: '- Como posso encontrar um profissional de saúde mental adequado para
+    meu filho ou para mim?'
+  intent: fato-18
+- examples: '- Onde mais posso obter ajuda?'
+  intent: fato-19
+- examples: '- O que devo saber antes de começar a tomar um novo medicamento?'
+  intent: fato-20
+- examples: '- Onde posso ir para encontrar terapia?'
+  intent: fato-21
+- examples: '- Onde posso aprender sobre os tipos de tratamento de saúde mental?'
+  intent: fato-22
+- examples: '- Quais são os diferentes tipos de profissionais de saúde mental?'
+  intent: fato-23
+- examples: '- Onde posso encontrar um grupo de apoio?'
+  intent: fato-24
+- examples: '- É possível prevenir problemas de saúde mental?'
+  intent: fato-25
+- examples: '- Existem curas para problemas de saúde mental?
+
+    - existe alguma cura para problemas de saúde mental?'
+  intent: fato-26
+- examples: '- O que causa problemas de saúde mental?'
+  intent: fato-27
+- examples: '- O que devo fazer se estiver preocupado com minha saúde mental?'
+  intent: fato-28
+- examples: '- Como sei se não estou bem?'
+  intent: fato-29
+- examples: '- Como posso manter as conexões sociais? E se eu me sentir sozinho?'
+  intent: fato-30
+- examples: '- Qual é a diferença entre ansiedade e estresse?'
+  intent: fato-31
+- examples: '- Qual é a diferença entre tristeza e depressão?
+
+    - diferença entre tristeza e depressão'
+  intent: fato-32
