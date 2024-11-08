@@ -3,6 +3,8 @@ const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const { v4: uuidv4 } = require('uuid');  // Biblioteca para gerar sessionId único
+const axios = require('axios');
 
 // Inicializa o servidor Express e o banco de dados SQLite persistente
 const app = express();
@@ -25,6 +27,7 @@ db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS conversations (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
+        session_id TEXT,
         message TEXT,
         sender TEXT,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -38,12 +41,39 @@ app.post('/login', (req, res) => {
     db.get(`SELECT * FROM users WHERE username = ? AND password = ?`, [username, password], (err, row) => {
         if (err) return res.status(500).json({ error: 'Erro interno' });
         if (row) {
-            res.json({ message: 'Login bem-sucedido', userId: row.id });
+            const sessionId = uuidv4();  // Gera um sessionId único
+            res.json({ message: 'Login bem-sucedido', userId: row.id, sessionId });
         } else {
             res.status(401).json({ error: 'Credenciais inválidas' });
         }
     });
 });
+
+// Supondo que você tenha configurado um WebSocket
+const socket = require('socket.io-client')('http://localhost:5005');
+
+socket.on('connect', () => {
+    console.log('Conectado ao servidor WebSocket');
+});
+
+socket.on('bot_uttered', (data) => {
+    console.log('Resposta do bot:', data);
+});
+
+app.post('/send-message', (req, res) => {
+    const { sessionId, message } = req.body;
+    
+    // Em vez de axios, use WebSocket para enviar a mensagem
+    socket.emit('user_uttered', {
+        sender: sessionId,
+        message: message
+    }, (response) => {
+        // Envia a resposta do chatbot de volta ao cliente
+        res.json({ botResponse: response });
+    });
+});
+
+
 
 // Rota para registrar um novo usuário
 app.post('/register', (req, res) => {
@@ -71,19 +101,20 @@ app.delete('/users/:id', (req, res) => {
     });
 });
 
-// Rota para salvar mensagens no banco de dados
+// Rota para salvar mensagens no banco de dados com sessionId
 app.post('/save-message', (req, res) => {
-    const { userId, message, sender } = req.body;
-    db.run(`INSERT INTO conversations (user_id, message, sender) VALUES (?, ?, ?)`, [userId, message, sender], (err) => {
+    const { userId, message, sender, sessionId } = req.body;
+    db.run(`INSERT INTO conversations (user_id, session_id, message, sender) VALUES (?, ?, ?, ?)`, [userId, sessionId, message, sender], (err) => {
         if (err) return res.status(500).json({ error: 'Erro ao salvar mensagem' });
         res.json({ message: 'Mensagem salva com sucesso' });
     });
 });
 
-// Rota para recuperar todas as conversas de um usuário específico
-app.get('/conversations/:userId', (req, res) => {
+// Rota para recuperar todas as conversas de um usuário específico por sessionId
+app.get('/conversations/:userId/:sessionId', (req, res) => {
     const userId = req.params.userId;
-    db.all(`SELECT * FROM conversations WHERE user_id = ?`, [userId], (err, rows) => {
+    const sessionId = req.params.sessionId;
+    db.all(`SELECT * FROM conversations WHERE user_id = ? AND session_id = ?`, [userId, sessionId], (err, rows) => {
         if (err) return res.status(500).json({ error: 'Erro ao recuperar conversas' });
         res.json(rows);
     });

@@ -1,0 +1,30 @@
+# URL do servidor de ações (se você tiver ações personalizadas)
+action_endpoint:
+  url: "http://localhost:5055/webhook"  # Porta padrão para o servidor de ações do Rasa
+
+# Configuração do rastreamento e análise do Rasa X, se aplicável
+# tracker_store:
+#   type: redis
+#   url: localhost
+#   port: 6379
+#   db: 0
+#   password: null
+#   use_ssl: false
+
+# Definição de canais de entrada - aqui usamos o SocketIO para o frontend
+socketio:
+  user_message_evt: user_uttered
+  bot_message_evt: bot_uttered
+  session_persistence: true
+
+# Caso precise de um armazenamento de eventos (opcional)
+# event_broker:
+#   type: "pika"
+#   url: "localhost"
+#   username: "guest"
+#   password: "guest"
+#   queue: "rasa_events"
+
+# Permitindo todas as origens para resolver problemas de CORS
+cors:
+  "*"

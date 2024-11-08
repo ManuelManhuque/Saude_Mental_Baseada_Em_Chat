@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +15,7 @@
             background-color: #f4f7fc;
             font-family: 'Arial', sans-serif;
         }
+
         .login-container {
             background: #fff;
             padding: 40px;
@@ -23,10 +25,12 @@
             margin: 0 auto;
             margin-top: 100px;
         }
+
         .login-container h2 {
             text-align: center;
             margin-bottom: 30px;
         }
+
         .chatbox {
             background-color: #fff;
             border-radius: 8px;
@@ -39,45 +43,51 @@
             flex-direction: column;
             justify-content: space-between;
         }
+
         .messages-container {
-    flex: 1;
-    overflow-y: auto;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    max-height: 350px;
-    display: flex;
-    flex-direction: column; /* Garante que as mensagens fiquem em colunas (uma embaixo da outra) */
-}
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            max-height: 350px;
+            display: flex;
+            flex-direction: column;
+            /* Garante que as mensagens fiquem em colunas (uma embaixo da outra) */
+        }
 
-.message {
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    max-width: 75%; /* Limita a largura das mensagens */
-    display: inline-block;
-    word-wrap: break-word; /* Garante que o texto se quebre automaticamente caso ultrapasse a largura */
-}
+        .message {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            max-width: 75%;
+            /* Limita a largura das mensagens */
+            display: inline-block;
+            word-wrap: break-word;
+            /* Garante que o texto se quebre automaticamente caso ultrapasse a largura */
+        }
 
-.message.user {
-    background-color: #e1f5fe;
-    align-self: flex-end;
-}
+        .message.user {
+            background-color: #e1f5fe;
+            align-self: flex-end;
+        }
 
-.message.bot {
-    background-color: #c8e6c9;
-    align-self: flex-start;
-}
+        .message.bot {
+            background-color: #c8e6c9;
+            align-self: flex-start;
+        }
 
         .input-container {
             display: flex;
             justify-content: space-between;
         }
+
         .input-container input {
             width: 80%;
             padding: 12px;
             border: 2px solid #ddd;
             border-radius: 8px;
         }
+
         .input-container button {
             width: 15%;
             background-color: #0288d1;
@@ -88,15 +98,18 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
+
         .input-container button:hover {
             background-color: #0277bd;
         }
+
         .alert {
             text-align: center;
             margin-top: 20px;
         }
     </style>
 </head>
+
 <body>
 
     <div id="app" class="container mt-5">
@@ -115,17 +128,19 @@
                 {{ loginError }}
             </div>
         </div>
-        
+
         <!-- Tela de chat -->
         <div v-else class="chatbox">
             <h1 class="text-center">Chatbot de Saúde Mental</h1>
             <div id="chatbox" class="messages-container">
-                <div v-for="(msg, index) in messages" :key="index" :class="['message', msg.sender === 'user' ? 'user' : 'bot']">
+                <div v-for="(msg, index) in messages" :key="index"
+                    :class="['message', msg.sender === 'user' ? 'user' : 'bot']">
                     {{ msg.text }}
                 </div>
             </div>
             <div class="input-container">
-                <input v-model="userInput" @keyup.enter="sendMessage" placeholder="Digite sua mensagem..." class="form-control" required>
+                <input v-model="userInput" @keyup.enter="sendMessage" placeholder="Digite sua mensagem..."
+                    class="form-control" required>
                 <button @click="sendMessage">Enviar</button>
             </div>
         </div>
@@ -202,16 +217,31 @@
                 },
                 sendMessage() {
                     if (this.userInput.trim() === '') return;
+
+                    // Adiciona a mensagem do usuário à lista de mensagens
                     this.messages.push({ text: this.userInput, sender: 'user' });
 
-                    // Envia a mensagem do usuário para o Rasa via WebSocket
-                    this.socket.emit("user_uttered", {
-                        message: this.userInput,
-                        customData: { language: "pt" }
-                    });
+                    // Verifica a conexão do WebSocket
+                    if (this.socket && this.socket.connected) {
+                        console.log("Enviando mensagem ao servidor WebSocket...");
+                        this.socket.emit("user_uttered", {
+                            message: this.userInput,
+                            customData: { language: "pt" }
+                        }, (response) => {
+                            // Verifica e processa a resposta do Rasa
+                            if (response && response.length > 0) {
+                                this.messages.push({ text: response[0].text, sender: 'bot' });
+                            } else {
+                                this.messages.push({ text: 'Desculpe, não consegui entender.', sender: 'bot' });
+                            }
+                        });
+                    } else {
+                        console.error('WebSocket não está conectado!');
+                    }
 
-                    this.userInput = '';  // Limpa o campo de entrada
+                    this.userInput = '';
                 }
+
             },
             mounted() {
                 WebChat.default.init({
@@ -231,4 +261,5 @@
         }).mount('#app');
     </script>
 </body>
+
 </html>
